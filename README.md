@@ -190,6 +190,37 @@ Once all components are confirmed to be running, you can access the frontend app
     ```
     Copy the `Application URL` and paste it into your web browser. You should see the frontend HTML page. Use the buttons on the page to test the backend and database connectivity.
 
+
+
+## 📸 Live Demo & Screenshots
+
+
+### Application Frontend
+
+A screenshot of web browser displaying the main frontend application page, showing its successful loading and presentation.
+
+![Application Frontend](screenshots/Accessed-app.png)
+
+### Backend Health Check
+
+A screenshot of the browser showing the JSON output from the `/api/health` endpoint (e.g., `http://<Minikube-IP>:<NodePort>/api/health`), confirming the backend service is responsive.
+
+![Backend Health Check](screenshots/Backend-health-check.png)
+
+### Database Connection Check
+
+A screenshot of the browser showing the JSON output from the `/api/data` endpoint (e.g., `http://<Minikube-IP>:<NodePort>/api/data`), demonstrating successful connectivity between the backend and the database, often including the database version.
+
+![Database Connection Check](screenshots/DB-connection-check.png)
+
+### Command Line Interface (CLI) Overview
+
+A screenshot of the terminal showing the output of the minikube's urls
+
+![CLI Overview](screenshots/cli.png)
+
+
+
 ---
 
 
