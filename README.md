@@ -3,6 +3,9 @@
 A practical demonstration of deploying a classic three-tier web application (Frontend, Backend, Database) on a **Minikube** Kubernetes cluster. This project leverages key Kubernetes concepts for robust, scalable, and manageable application deployments, serving as an excellent portfolio piece to showcase your cloud-native skills.
 
 ---
+[**📸 Screenshots**](#screenshots)
+---
+
 
 ## 🚀 Architecture Overview
 
@@ -192,32 +195,32 @@ Once all components are confirmed to be running, you can access the frontend app
 
 
 
-## 📸 Live Demo & Screenshots
+## Screenshots
 
 
 ### Application Frontend
 
 A screenshot of web browser displaying the main frontend application page, showing its successful loading and presentation.
 
-![Application Frontend](screenshots/Accessed-app.png)
+![Application Frontend](Screenshots/Accessed-app.png)
 
 ### Backend Health Check
 
 A screenshot of the browser showing the JSON output from the `/api/health` endpoint (e.g., `http://<Minikube-IP>:<NodePort>/api/health`), confirming the backend service is responsive.
 
-![Backend Health Check](screenshots/Backend-health-check.png)
+![Backend Health Check](Screenshots/Backend-health-check.png)
 
 ### Database Connection Check
 
 A screenshot of the browser showing the JSON output from the `/api/data` endpoint (e.g., `http://<Minikube-IP>:<NodePort>/api/data`), demonstrating successful connectivity between the backend and the database, often including the database version.
 
-![Database Connection Check](screenshots/DB-connection-check.png)
+![Database Connection Check](Screenshots/DB-connection-check.png)
 
 ### Command Line Interface (CLI) Overview
 
 A screenshot of the terminal showing the output of the minikube's urls
 
-![CLI Overview](screenshots/cli.png)
+![CLI Overview](Screenshots/cli.png)
 
 
 
