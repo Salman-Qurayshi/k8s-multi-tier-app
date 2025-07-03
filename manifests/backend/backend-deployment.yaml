@@ -49,60 +49,75 @@ spec:
           valueFrom:
             secretKeyRef:
               name: database-secret
-              key: MYSQL_PASSWORD
+              key: MYSQL_PASSWORD # Ensure this key matches your secret
         - name: APP_PORT
           valueFrom:
             configMapKeyRef:
               name: backend-config
               key: APP_PORT
-        command: ["/bin/sh"]
-        args: ["-c", "pip install flask mysql-connector-python && python -c \"
-from flask import Flask, jsonify
-import mysql.connector
-import os
-import time
+        command: ["/bin/bash", "-c"] # Using bash for robust command chaining
+        args:
+          - |
+            # Install Python dependencies
+            pip install flask mysql-connector-python && \
+            
+            # Run the Flask application
+            python -c "
+            from flask import Flask, jsonify
+            import mysql.connector
+            import os
+            import time
 
-app = Flask(__name__)
+            app = Flask(__name__)
 
-def get_db_connection():
-    max_retries = 5
-    for i in range(max_retries):
-        try:
-            connection = mysql.connector.connect(
-                host=os.environ['DB_HOST'],
-                port=int(os.environ['DB_PORT']),
-                database=os.environ['DB_NAME'],
-                user=os.environ['DB_USER'],
-                password=os.environ['DB_PASSWORD']
-            )
-            return connection
-        except Exception as e:
-            print(f'Database connection attempt {i+1} failed: {e}')
-            time.sleep(5)
-    return None
+            def get_db_connection():
+                max_retries = 5
+                # Ensure the database service name is correct (database-service)
+                # and port 3306 is accessible
+                print('Attempting to connect to database...')
+                for i in range(max_retries):
+                    try:
+                        connection = mysql.connector.connect(
+                            host=os.environ['DB_HOST'],
+                            port=int(os.environ['DB_PORT']),
+                            database=os.environ['DB_NAME'],
+                            user=os.environ['DB_USER'],
+                            password=os.environ['DB_PASSWORD']
+                        )
+                        print('Successfully connected to database!')
+                        return connection
+                    except Exception as e:
+                        print(f'Database connection attempt {i+1} failed: {e}')
+                        time.sleep(5)
+                print('Failed to connect to database after multiple retries.')
+                return None
 
-@app.route('/api/health')
-def health():
-    return jsonify({'status': 'healthy', 'service': 'backend'})
+            @app.route('/api/health')
+            def health():
+                return jsonify({'status': 'healthy', 'service': 'backend'})
 
-@app.route('/api/data')
-def get_data():
-    try:
-        conn = get_db_connection()
-        if conn:
-            cursor = conn.cursor()
-            cursor.execute('SELECT VERSION()')
-            version = cursor.fetchone()
-            conn.close()
-            return jsonify({'message': 'Backend connected to database', 'db_version': version[0]})
-        else:
-            return jsonify({'error': 'Database connection failed'}), 500
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+            @app.route('/api/data')
+            def get_data():
+                try:
+                    conn = get_db_connection()
+                    if conn:
+                        cursor = conn.cursor()
+                        cursor.execute('SELECT VERSION()')
+                        version = cursor.fetchone()
+                        conn.close()
+                        return jsonify({'message': 'Backend connected to database', 'db_version': version[0]})
+                    else:
+                        return jsonify({'error': 'Database connection failed', 'details': 'Could not establish DB connection'}), 500
+                except Exception as e:
+                    # More detailed error for debugging
+                    return jsonify({'error': 'An unexpected error occurred', 'details': str(e)}), 500
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ['APP_PORT']))
-\""]
+            if __name__ == '__main__':
+                # Ensure APP_PORT is correctly set to 5000 in backend-config.yaml
+                port = int(os.environ.get('APP_PORT', 5000))
+                print(f'Flask app starting on 0.0.0.0:{port}')
+                app.run(host='0.0.0.0', port=port)
+            "
         readinessProbe:
           httpGet:
             path: /api/health
